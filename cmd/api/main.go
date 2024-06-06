@@ -1,35 +1,23 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	"github.com/spf13/viper"
 	"github.com/studentkickoff/gobp/internal/api"
+	"github.com/studentkickoff/gobp/internal/config"
 )
 
 func main() {
-	// TODO: Init viper config settings
-	viper.AutomaticEnv()
-	viper.SetDefault("app_env", "development")
-	env := viper.GetString("app_env")
+	err := config.Init()
+	if err != nil {
+		log.Fatal().Err(err).Msg("Failed to load config")
+	}
+	env := config.GetDefaultString("app.env", "development")
 
 	if env == "development" {
 		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
-	}
-
-	// Print pwd
-	fmt.Println(os.Getenv("PWD"))
-
-	viper.SetConfigName(fmt.Sprintf("%s.toml", env))
-	viper.SetConfigType("toml")
-	viper.AddConfigPath("./config")
-
-	err := viper.ReadInConfig()
-	if err != nil { // Handle errors reading the config file
-		log.Fatal().Err(err).Msg("Error while reading config file")
 	}
 
 	server, err := api.NewServer()

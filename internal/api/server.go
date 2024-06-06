@@ -5,8 +5,8 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/rs/zerolog/log"
-	"github.com/spf13/viper"
 	"github.com/studentkickoff/gobp/internal/api/auth"
+	"github.com/studentkickoff/gobp/internal/config"
 	"github.com/studentkickoff/gobp/internal/database"
 	"github.com/uptrace/bun"
 )
@@ -30,10 +30,8 @@ func NewServer() (*Server, error) {
 	authAPI := auth.NewAPI(db, api)
 	authAPI.Router()
 
-	viper.SetDefault("server.port", 8000)
-	viper.SetDefault("server.host", "127.0.0.1")
-	port := viper.GetInt("server.port")
-	host := viper.GetString("server.host")
+	port := config.GetDefaultInt("server.port", 8000)
+	host := config.GetDefaultString("server.host", "127.0.0.1")
 
 	srv := &Server{
 		db:   db,
