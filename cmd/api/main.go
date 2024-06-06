@@ -19,6 +19,7 @@ func main() {
 	if env == "development" {
 		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	}
+	log.Logger = log.Logger.With().Caller().Str("env", env).Logger()
 
 	server, err := api.NewServer()
 	if err != nil {

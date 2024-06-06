@@ -52,6 +52,7 @@
           ];
           env = [
             { name = "DB_HOST"; eval = "$PRJ_DATA_DIR/postgres"; }
+            { name = "DB_DATABASE"; eval = "postgres"; }
             { name = "PGDATA"; eval = "$PRJ_DATA_DIR/postgres"; }
           ];
         };

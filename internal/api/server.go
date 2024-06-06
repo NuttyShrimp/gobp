@@ -4,7 +4,11 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/session"
+	"github.com/gofiber/storage/memory/v2"
+	"github.com/gofiber/storage/redis/v3"
 	"github.com/rs/zerolog/log"
+	"github.com/shareed2k/goth_fiber"
 	"github.com/studentkickoff/gobp/internal/api/auth"
 	"github.com/studentkickoff/gobp/internal/database"
 	"github.com/studentkickoff/gobp/pkg/config"
@@ -24,10 +28,25 @@ func NewServer() (*Server, error) {
 		return nil, err
 	}
 
-	app := fiber.New()
-	api := app.Group("/api")
+	env := config.GetDefaultString("app.env", "development")
+	var sessionStore fiber.Storage
+	if env == "production" {
+		sessionStore = redis.New()
+	} else {
+		sessionStore = memory.New()
+	}
 
-	authAPI := auth.NewAPI(db, api)
+	goth_fiber.SessionStore = session.New(session.Config{
+		KeyLookup:      fmt.Sprintf("cookie:%s_session_id", config.GetString("app.name")),
+		CookieHTTPOnly: true,
+		Storage:        sessionStore,
+		CookieSecure:   env == "production",
+	})
+
+	app := fiber.New()
+	// api := app.Group("/api")
+
+	authAPI := auth.NewAPI(db, app)
 	authAPI.Router()
 
 	port := config.GetDefaultInt("server.port", 8000)
