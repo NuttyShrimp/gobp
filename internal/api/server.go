@@ -6,8 +6,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/rs/zerolog/log"
 	"github.com/studentkickoff/gobp/internal/api/auth"
-	"github.com/studentkickoff/gobp/internal/config"
 	"github.com/studentkickoff/gobp/internal/database"
+	"github.com/studentkickoff/gobp/pkg/config"
 	"github.com/uptrace/bun"
 )
 

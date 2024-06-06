@@ -6,7 +6,7 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/studentkickoff/gobp/internal/api"
-	"github.com/studentkickoff/gobp/internal/config"
+	"github.com/studentkickoff/gobp/pkg/config"
 )
 
 func main() {
