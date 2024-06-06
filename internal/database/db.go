@@ -8,6 +8,7 @@ import (
 	"github.com/studentkickoff/gobp/internal/config"
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/pgdialect"
+	"github.com/uptrace/bun/extra/bundebug"
 )
 
 func New() (*bun.DB, error) {
@@ -33,7 +34,10 @@ func New() (*bun.DB, error) {
 
 	db := bun.NewDB(sqldb, pgdialect.New())
 
-	// TODO: add hook to log queries in debug env
+	db.AddQueryHook(bundebug.NewQueryHook(
+		bundebug.WithVerbose(true),
+		bundebug.FromEnv("BUNDEBUG"),
+	))
 
 	return db, nil
 }

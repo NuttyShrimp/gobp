@@ -9,6 +9,7 @@ require (
 	github.com/spf13/viper v1.18.2
 	github.com/uptrace/bun v1.2.1
 	github.com/uptrace/bun/dialect/pgdialect v1.2.1
+	github.com/uptrace/bun/extra/bundebug v1.2.1
 )
 
 require (
