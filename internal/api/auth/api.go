@@ -70,7 +70,7 @@ func (a *API) LoginCallbackHandler(c *fiber.Ctx) error {
 		return fiber.ErrInternalServerError
 	}
 
-	return nil
+	return c.Redirect("/")
 }
 
 func (a *API) LogoutHandler(c *fiber.Ctx) error {
