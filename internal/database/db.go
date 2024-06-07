@@ -4,14 +4,11 @@ import (
 	"context"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/jackc/pgx/v5/stdlib"
 	"github.com/studentkickoff/gobp/pkg/config"
-	"github.com/uptrace/bun"
-	"github.com/uptrace/bun/dialect/pgdialect"
-	"github.com/uptrace/bun/extra/bundebug"
+	"github.com/studentkickoff/gobp/pkg/sqlc"
 )
 
-func New() (*bun.DB, error) {
+func New() (*sqlc.Queries, error) {
 	pgConfig, err := pgxpool.ParseConfig("")
 	if err != nil {
 		return nil, err
@@ -27,17 +24,11 @@ func New() (*bun.DB, error) {
 		return nil, err
 	}
 
-	sqldb := stdlib.OpenDBFromPool(pool)
-	if err := sqldb.Ping(); err != nil {
+	if err = pool.Ping(context.TODO()); err != nil {
 		return nil, err
 	}
 
-	db := bun.NewDB(sqldb, pgdialect.New())
+	queries := sqlc.New(pool)
 
-	db.AddQueryHook(bundebug.NewQueryHook(
-		bundebug.WithVerbose(true),
-		bundebug.FromEnv("BUNDEBUG"),
-	))
-
-	return db, nil
+	return queries, nil
 }

@@ -12,17 +12,18 @@ import (
 	"github.com/studentkickoff/gobp/internal/api/auth"
 	"github.com/studentkickoff/gobp/internal/database"
 	"github.com/studentkickoff/gobp/pkg/config"
-	"github.com/uptrace/bun"
+	"github.com/studentkickoff/gobp/pkg/sqlc"
 )
 
 type Server struct {
 	*fiber.App
 	Addr string
-	db   *bun.DB
+	db   *sqlc.Queries
 }
 
 func NewServer() (*Server, error) {
 	db, err := database.New()
+
 	if err != nil {
 		log.Error().Str("module", "database").Err(err).Msg("")
 		return nil, err

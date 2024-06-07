@@ -1,23 +1,25 @@
 package auth
 
 import (
+	"errors"
+
 	"github.com/gofiber/fiber/v2"
+	"github.com/jackc/pgx/v5"
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/providers/microsoftonline"
 	"github.com/rs/zerolog/log"
 	"github.com/shareed2k/goth_fiber"
 	"github.com/spf13/viper"
 	"github.com/studentkickoff/gobp/internal/api/util"
-	"github.com/studentkickoff/gobp/internal/database"
-	"github.com/uptrace/bun"
+	"github.com/studentkickoff/gobp/pkg/sqlc"
 )
 
 type API struct {
 	router fiber.Router
-	db     *bun.DB
+	db     *sqlc.Queries
 }
 
-func NewAPI(db *bun.DB, router fiber.Router) *API {
+func NewAPI(db *sqlc.Queries, router fiber.Router) *API {
 	goth.UseProviders(
 		microsoftonline.New(viper.GetString("auth.msentra.client_id"), viper.GetString("auth.msentra.client_secret"), viper.GetString("auth.msentra.callbackURL")),
 	)
@@ -44,23 +46,29 @@ func (a *API) LoginCallbackHandler(c *fiber.Ctx) error {
 		log.Fatal().Err(err).Msg("failed to complete user auth")
 	}
 
-	dbUser := &database.User{}
-	err = a.db.NewSelect().Model(user).Where("uid = ?", user.UserID).Scan(c.Context(), &dbUser)
-	if err != nil {
+	dbUser, err := a.db.GetUserByUid(c.Context(), user.UserID)
+	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
 		log.Error().Err(err).Msg("failed to search user")
 		return fiber.ErrInternalServerError
 	}
 
-	if dbUser.Id == 0 {
-		dbUser = &database.User{Name: user.Name, Uid: user.UserID, Email: user.Email}
-		_, err := a.db.NewInsert().Model(dbUser).Exec(c.Context())
+	if dbUser.ID == 0 {
+		dbUser, err = a.db.CreateUser(c.Context(), sqlc.CreateUserParams{
+			Name:  user.Name,
+			Uid:   user.UserID,
+			Email: user.Email,
+		})
 		if err != nil {
-			log.Fatal().Err(err).Msg("failed to insert user")
+			log.Error().Err(err).Msg("failed to insert user")
 			return fiber.ErrInternalServerError
 		}
 	}
 
-	util.StoreInSession("userId", dbUser.Id, c)
+	err = util.StoreInSession("userId", dbUser.ID, c)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to store user in session")
+		return fiber.ErrInternalServerError
+	}
 
 	return nil
 }

@@ -30,11 +30,22 @@ docker-down:
 
 # Test the application
 test:
-	@go test ./tests -v
+	@go test ./... -v
 
 # Clean the binary
 clean:
 	@rm -f main
+
+goose:
+	@read -p "Action: " action; \
+	goose -dir ./db/migrations postgres "user=postgres password=password dbname=gobp sslmode=disable" $$action
+
+migrate:
+	@goose -dir ./db/migrations postgres "user=postgres password=password dbname=gobp sslmode=disable" up
+
+create-migration:
+	@read -p "Enter migration name: " name; \
+	goose -dir ./db/migrations create $$name sql
 
 # Live Reload
 watch:
