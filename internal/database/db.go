@@ -24,7 +24,7 @@ func New() (*sqlc.Queries, error) {
 		return nil, err
 	}
 
-	if err = pool.Ping(context.TODO()); err != nil {
+	if err := pool.Ping(context.TODO()); err != nil {
 		return nil, err
 	}
 

@@ -9,6 +9,7 @@ import (
 
 func bindEnv(key string) {
 	envName := strings.ToUpper(strings.ReplaceAll(key, ".", "_"))
+	// nolint:errcheck // we do not care if it can get binded
 	viper.BindEnv(key, envName)
 }
 
