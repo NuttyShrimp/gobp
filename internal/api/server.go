@@ -45,9 +45,9 @@ func NewServer() (*Server, error) {
 	})
 
 	app := fiber.New()
-	// api := app.Group("/api")
+	api := app.Group("/api")
 
-	authAPI := auth.NewAPI(db, app)
+	authAPI := auth.NewAPI(db, api)
 	authAPI.Router()
 
 	port := config.GetDefaultInt("server.port", 8000)

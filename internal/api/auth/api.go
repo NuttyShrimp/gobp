@@ -10,21 +10,22 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/shareed2k/goth_fiber"
 	"github.com/spf13/viper"
+	"github.com/studentkickoff/gobp/internal/api/middlewares"
 	"github.com/studentkickoff/gobp/internal/api/util"
 	"github.com/studentkickoff/gobp/pkg/sqlc"
 )
 
-type API struct {
+type AuthRouter struct {
 	router fiber.Router
 	db     *sqlc.Queries
 }
 
-func NewAPI(db *sqlc.Queries, router fiber.Router) *API {
+func NewAPI(db *sqlc.Queries, router fiber.Router) *AuthRouter {
 	goth.UseProviders(
 		microsoftonline.New(viper.GetString("auth.msentra.client_id"), viper.GetString("auth.msentra.client_secret"), viper.GetString("auth.msentra.callbackURL")),
 	)
 
-	api := &API{
+	api := &AuthRouter{
 		router,
 		db,
 	}
@@ -32,28 +33,29 @@ func NewAPI(db *sqlc.Queries, router fiber.Router) *API {
 	return api
 }
 
-func (a *API) Router() {
-	auth := a.router.Group("/auth")
+func (r *AuthRouter) Router() {
+	auth := r.router.Group("/auth")
 	auth.Get("/login/:provider", goth_fiber.BeginAuthHandler)
-	auth.Get("/callback/:provider", a.LoginCallbackHandler)
-	auth.Get("/logout", a.LogoutHandler)
+	auth.Get("/callback/:provider", r.LoginCallbackHandler)
+	auth.Get("/logout", r.LogoutHandler)
+	auth.Get("/session", middlewares.ProtectedRoute, r.SessionHandler)
 }
 
-func (a *API) LoginCallbackHandler(c *fiber.Ctx) error {
+func (r *AuthRouter) LoginCallbackHandler(c *fiber.Ctx) error {
 	// if we get logged out, we should overwrite this is with a shouldLogout = false
 	user, err := goth_fiber.CompleteUserAuth(c)
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to complete user auth")
 	}
 
-	dbUser, err := a.db.GetUserByUid(c.Context(), user.UserID)
+	dbUser, err := r.db.GetUserByUid(c.Context(), user.UserID)
 	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
 		log.Error().Err(err).Msg("failed to search user")
 		return fiber.ErrInternalServerError
 	}
 
 	if dbUser.ID == 0 {
-		dbUser, err = a.db.CreateUser(c.Context(), sqlc.CreateUserParams{
+		dbUser, err = r.db.CreateUser(c.Context(), sqlc.CreateUserParams{
 			Name:  user.Name,
 			Uid:   user.UserID,
 			Email: user.Email,
@@ -73,10 +75,14 @@ func (a *API) LoginCallbackHandler(c *fiber.Ctx) error {
 	return c.Redirect("/")
 }
 
-func (a *API) LogoutHandler(c *fiber.Ctx) error {
+func (r *AuthRouter) LogoutHandler(c *fiber.Ctx) error {
 	if err := goth_fiber.Logout(c); err != nil {
 		log.Error().Err(err).Msg("failed to logout")
 	}
 
 	return c.SendString("logout")
+}
+
+func (r *AuthRouter) SessionHandler(c *fiber.Ctx) error {
+	return c.SendStatus(200)
 }
