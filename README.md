@@ -16,6 +16,13 @@
 - Viper
 - Sqlc
 
+## Used React libraries
+- [React hook form](https://react-hook-form.com)
+- [Shadcn UI](https://ui.shadcn.com)
+- [Tanstack Query](https://tanstack.com/query/latest)
+- [React router](https://reactrouter.com)
+- [Sonner](https://sonner.emilkowal.ski/)
+
 ## Useful flows
 
 ### Adding a new typed query (sqlc)

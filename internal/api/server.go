@@ -62,6 +62,12 @@ func NewServer() (*Server, error) {
 	userAPI := user.NewAPI(db, protectedApi)
 	userAPI.Router()
 
+	if env != "development" {
+		app.Static("/", "./public")
+		// Fallback for SPA to handle
+		app.Static("*", "./public/index.html")
+	}
+
 	port := config.GetDefaultInt("server.port", 8000)
 	host := config.GetDefaultString("server.host", "127.0.0.1")
 
