@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 
+	"github.com/gofiber/contrib/fiberzerolog"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/gofiber/storage/memory/v2"
@@ -10,6 +11,8 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/shareed2k/goth_fiber"
 	"github.com/studentkickoff/gobp/internal/api/auth"
+	"github.com/studentkickoff/gobp/internal/api/middlewares"
+	"github.com/studentkickoff/gobp/internal/api/user"
 	"github.com/studentkickoff/gobp/internal/database"
 	"github.com/studentkickoff/gobp/pkg/config"
 	"github.com/studentkickoff/gobp/pkg/sqlc"
@@ -45,10 +48,19 @@ func NewServer() (*Server, error) {
 	})
 
 	app := fiber.New()
+	app.Use(fiberzerolog.New(fiberzerolog.Config{
+		Logger: &log.Logger,
+	}))
+
 	api := app.Group("/api")
 
 	authAPI := auth.NewAPI(db, api)
 	authAPI.Router()
+
+	protectedApi := api.Use(middlewares.ProtectedRoute)
+
+	userAPI := user.NewAPI(db, protectedApi)
+	userAPI.Router()
 
 	port := config.GetDefaultInt("server.port", 8000)
 	host := config.GetDefaultString("server.host", "127.0.0.1")
