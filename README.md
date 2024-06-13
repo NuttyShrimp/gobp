@@ -1,5 +1,7 @@
 # Go blueprint
 
+A new BP for a full stack Go + React program
+
 ## Development setup
 
 - [Golang >= 1.21](https://go.dev/)
@@ -39,3 +41,12 @@
 2) Edit the newly made migration that can be found in the `db/migrations` folder
 3) Update the queries in the `db/queries` accordingly
 4) Run `sqlc generate` to generate the new table structs
+
+
+## Deployment
+
+It is recommended to run the application in an docker container
+
+It need at least the following additional resources:
+- Postgres Database
+- Redis
