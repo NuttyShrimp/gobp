@@ -3,6 +3,10 @@ module github.com/studentkickoff/gobp
 go 1.21.10
 
 require (
+	github.com/aidenwallis/go-utils v0.0.19
+	github.com/archdx/zerolog-sentry v1.8.3
+	github.com/getsentry/sentry-go v0.28.1
+	github.com/gofiber/contrib/fiberzerolog v1.0.1
 	github.com/gofiber/fiber/v2 v2.52.4
 	github.com/gofiber/storage/memory/v2 v2.0.1
 	github.com/gofiber/storage/redis/v3 v3.1.1
@@ -15,13 +19,10 @@ require (
 
 require (
 	github.com/andybalholm/brotli v1.1.0 // indirect
-	github.com/archdx/zerolog-sentry v1.8.3 // indirect
 	github.com/buger/jsonparser v1.1.1 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
-	github.com/getsentry/sentry-go v0.28.1 // indirect
-	github.com/gofiber/contrib/fiberzerolog v1.0.1 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/context v1.1.1 // indirect

@@ -5,6 +5,10 @@ port = 3000
 name = "MyApp"
 dsn = ""
 
+[auth.sko]
+url = "http://localhost:3004"
+client_secret = ""
+
 [auth.msentra]
 client_id=""
 client_secret=""
