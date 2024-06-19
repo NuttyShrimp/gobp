@@ -3,6 +3,8 @@ package api
 import (
 	"fmt"
 
+	"github.com/getsentry/sentry-go"
+	sentryfiber "github.com/getsentry/sentry-go/fiber"
 	"github.com/gofiber/contrib/fiberzerolog"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/session"
@@ -47,7 +49,18 @@ func NewServer() (*Server, error) {
 		CookieSecure:   env == "production",
 	})
 
+	if err := sentry.Init(sentry.ClientOptions{
+		Dsn:              config.GetString("app.dsn"),
+		TracesSampleRate: 1.0,
+	}); err != nil {
+		fmt.Printf("Sentry initialization failed: %v\n", err)
+	}
+
 	app := fiber.New()
+	app.Use(sentryfiber.New(sentryfiber.Options{
+		Repanic:         true,
+		WaitForDelivery: false,
+	}))
 	app.Use(fiberzerolog.New(fiberzerolog.Config{
 		Logger: &log.Logger,
 	}))
