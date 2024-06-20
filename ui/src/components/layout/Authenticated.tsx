@@ -1,12 +1,15 @@
 import { useQuery } from "@tanstack/react-query"
-import { Navigate, Outlet } from "react-router-dom"
+import { Outlet } from "react-router-dom"
 import { useAuth } from "../../lib/context/auth";
 import { toast } from "sonner";
 
 export const AuthenticatedLayout = () => {
-  const { isLoading, isError } = useQuery({
+  const { isLoading, isError, data } = useQuery({
     queryKey: ["session"],
-    queryFn: () => fetch("/api/auth/session"),
+    queryFn: () => fetch("/api/auth/session", {
+      redirect: "error"
+    }),
+    retry: false,
     refetchOnWindowFocus: false,
   })
   const { logout } = useAuth();
@@ -19,10 +22,14 @@ export const AuthenticatedLayout = () => {
     )
   }
 
-  if (isError) {
+  if (isError || data?.status !== 200) {
     logout();
     toast.warning("Session has expired...")
-    return (<Navigate to={"/login"} />)
+    return (
+      <div className="h-svh w-svw flex flex-col items-center justify-center">
+        <p>Logging out...</p>
+      </div>
+    )
   }
 
   return (

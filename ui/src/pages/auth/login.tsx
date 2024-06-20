@@ -11,12 +11,12 @@ export const LoginPage = () => {
           <CardDescription className="text-center text-lg">MyApp</CardDescription>
         </CardHeader>
         <CardContent className="flex justify-center items-center flex-1">
-          <Button className="w-52 h-16" >
-            <a href={"/api/auth/login/microsoftonline"} className="flex justify-center items-center h-max text-xl">
+          <a href={"/api/auth/login/microsoftonline"}>
+            <Button className="w-52 h-16 flex justify-center items-center text-xl" >
               <FaMicrosoft size={'1.7rem'} className="mr-2" />
               Office 365
-            </a>
-          </Button>
+            </Button>
+          </a>
         </CardContent>
       </Card>
     </div>
