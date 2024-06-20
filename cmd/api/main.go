@@ -31,7 +31,7 @@ func main() {
 		multi := zerolog.MultiLevelWriter(os.Stdout, w)
 		log.Logger = zerolog.New(multi).With().Timestamp().Logger()
 	}
-	log.Logger = log.Logger.With().Caller().Str("env", env).Logger()
+	log.Logger = log.Logger.With().Caller().Stack().Str("env", env).Logger()
 
 	server, err := api.NewServer()
 	if err != nil {
