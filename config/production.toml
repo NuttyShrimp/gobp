@@ -1,0 +1,26 @@
+[server]
+port = 8000
+
+[app]
+name = "MyApp"
+dsn = ""
+host = "https://am.studentkickoff.be"
+
+[mail]
+provider="smtp"
+
+[mail.smtp]
+address='smtp.eu.mailgun.org'
+port=587
+domain='studentkickoff.be'
+username=""
+password=""
+
+[auth.sko]
+url = "http://localhost:3004"
+client_secret = ""
+
+[auth.msentra]
+client_id=""
+client_secret=""
+callbackURL=""

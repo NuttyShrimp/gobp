@@ -4,6 +4,10 @@ port = 3000
 [app]
 name = "MyApp"
 dsn = ""
+host = "http://localhost:3000"
+
+[mail]
+provider="browser"
 
 [auth.sko]
 url = "http://localhost:3004"

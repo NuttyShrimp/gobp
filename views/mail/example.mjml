@@ -1,0 +1,3 @@
+{{define "content"}}
+<mj-text>test</mj-text>
+{{end}}

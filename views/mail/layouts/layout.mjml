@@ -1,0 +1,23 @@
+<mjml>
+  <mj-head>
+    <mj-style inline="inline">
+      .link-nostyle { color: inherit; }
+    </mj-style>
+    <mj-attributes>
+      <mj-class name="background" background-color="#35465a" />
+      <mj-class name="title" font-size="20px" font-weight="bold" />
+      <mj-button background-color="#ffffff" color="#35465a" font-weight="bold" />
+      <mj-all font-family="Arial" color="#ffffff" />
+    </mj-attributes>
+  </mj-head>
+  <mj-body>
+    <mj-section mj-class="background">
+      <mj-column width="75%">
+        {{block "content" .}}{{end}}
+      </mj-column>
+      <mj-column width="25%">
+        <mj-image src="{{ .AssetHost }}/images/logo.png" width="120px" />
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
