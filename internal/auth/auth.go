@@ -71,7 +71,7 @@ func getPermsFromAuth(ctx context.Context, userId string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	// nolint: errcheck // ignore error of closing body
+	// nolint:errcheck // ignore error of closing body
 	defer resp.Body.Close()
 
 	var body authPermissions
