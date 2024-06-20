@@ -45,7 +45,7 @@ func (r *AuthRouter) LoginCallbackHandler(c *fiber.Ctx) error {
 	// if we get logged out, we should overwrite this is with a shouldLogout = false
 	user, err := goth_fiber.CompleteUserAuth(c)
 	if err != nil {
-		log.Fatal().Err(err).Msg("failed to complete user auth")
+		log.Error().Err(err).Msg("failed to complete user auth")
 	}
 
 	dbUser, err := r.db.GetUserByUid(c.Context(), user.UserID)
