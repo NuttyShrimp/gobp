@@ -8,7 +8,7 @@ import (
 	"github.com/gofiber/contrib/fiberzerolog"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/session"
-	"github.com/gofiber/storage/memory/v2"
+	"github.com/gofiber/storage/postgres/v3"
 	"github.com/gofiber/storage/redis/v3"
 	"github.com/rs/zerolog/log"
 	"github.com/shareed2k/goth_fiber"
@@ -27,7 +27,7 @@ type Server struct {
 }
 
 func NewServer() (*Server, error) {
-	db, err := database.New()
+	db, pool, err := database.New()
 
 	if err != nil {
 		log.Error().Str("module", "database").Err(err).Msg("")
@@ -39,7 +39,9 @@ func NewServer() (*Server, error) {
 	if env == "production" {
 		sessionStore = redis.New()
 	} else {
-		sessionStore = memory.New()
+		sessionStore = postgres.New(postgres.Config{
+			DB: pool,
+		})
 	}
 
 	goth_fiber.SessionStore = session.New(session.Config{

@@ -8,10 +8,10 @@ import (
 	"github.com/studentkickoff/gobp/pkg/sqlc"
 )
 
-func New() (*sqlc.Queries, error) {
+func New() (*sqlc.Queries, *pgxpool.Pool, error) {
 	pgConfig, err := pgxpool.ParseConfig("")
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	pgConfig.ConnConfig.Host = config.GetDefaultString("db.host", "localhost")
 	pgConfig.ConnConfig.Port = config.GetDefaultUint16("db.port", 5432)
@@ -21,14 +21,14 @@ func New() (*sqlc.Queries, error) {
 
 	pool, err := pgxpool.NewWithConfig(context.Background(), pgConfig)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	if err := pool.Ping(context.TODO()); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	queries := sqlc.New(pool)
 
-	return queries, nil
+	return queries, pool, nil
 }

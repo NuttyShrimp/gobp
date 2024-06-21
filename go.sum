@@ -36,8 +36,8 @@ github.com/gofiber/contrib/fiberzerolog v1.0.1 h1:kKIlD1v72Iy9/PW3z5nyZ1XeAAO1ZN
 github.com/gofiber/contrib/fiberzerolog v1.0.1/go.mod h1:bDsXnPPGUVTETnl9KfzoTgLABYFxDdIjSabLqU763Do=
 github.com/gofiber/fiber/v2 v2.52.4 h1:P+T+4iK7VaqUsq2PALYEfBBo6bJZ4q3FP8cZ84EggTM=
 github.com/gofiber/fiber/v2 v2.52.4/go.mod h1:KEOE+cXMhXG0zHc9d8+E38hoX+ZN7bhOtgeF2oT6jrQ=
-github.com/gofiber/storage/memory/v2 v2.0.1 h1:tAETnom9uvEB9B3I2LkgewiuqYDAH0ItrIsmT8MUEwk=
-github.com/gofiber/storage/memory/v2 v2.0.1/go.mod h1:RRo3RfX6nTD/UhERyE/u5LcSfqtMo9dA4ltmieSe+QM=
+github.com/gofiber/storage/postgres/v3 v3.0.0 h1:zV2e54PmCO1isZcnWufZ6DlId2FwsRAJgW7WxOK+ei8=
+github.com/gofiber/storage/postgres/v3 v3.0.0/go.mod h1:TB7QJeilUS/FGvbwis6lY4tcGOLdAHJt7M11GNGXobA=
 github.com/gofiber/storage/redis/v3 v3.1.1 h1:dkmeTv8qmM6giR65yTAxXN4lP1UU/h7uXuWuQoJOjdI=
 github.com/gofiber/storage/redis/v3 v3.1.1/go.mod h1:BQ/vdV/MJKi8tcLvHfvBPXiM4pzitDx5YqqDz/XvF0I=
 github.com/google/go-cmp v0.6.0 h1:ofyhxvXcZhMsU5ulbFiLKl/XBFqE1GSq7atu8tAmTRI=
