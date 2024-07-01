@@ -9,7 +9,7 @@ require (
 	github.com/cli/browser v1.3.0
 	github.com/getsentry/sentry-go v0.28.1
 	github.com/gofiber/contrib/fiberzerolog v1.0.1
-	github.com/gofiber/fiber/v2 v2.52.4
+	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/gofiber/storage/postgres/v3 v3.0.0
 	github.com/gofiber/storage/redis/v3 v3.1.1
 	github.com/jackc/pgx/v5 v5.6.0
