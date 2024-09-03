@@ -1,45 +1,30 @@
 package main
 
 import (
-	stdlog "log"
-	"os"
+	"fmt"
 
-	zlogsentry "github.com/archdx/zerolog-sentry"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 	"github.com/studentkickoff/gobp/internal/api"
 	"github.com/studentkickoff/gobp/pkg/config"
+	"github.com/studentkickoff/gobp/pkg/logger"
+	"go.uber.org/zap"
 )
 
 func main() {
 	err := config.Init()
 	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to load config")
+		panic(err)
 	}
-	env := config.GetDefaultString("app.env", "development")
 
-	if env == "development" {
-		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
-	} else if dsn := config.GetString("app.dsn"); dsn != "" {
-		w, err := zlogsentry.New(dsn)
-		if err != nil {
-			stdlog.Fatal(err)
-		}
-		// nolint:errcheck,gocritic // ignore error
-		// defer w.Close()
-
-		multi := zerolog.MultiLevelWriter(os.Stdout, w)
-		log.Logger = zerolog.New(multi).With().Timestamp().Logger()
-	}
-	log.Logger = log.Logger.With().Caller().Stack().Str("env", env).Logger()
+	zapLogger := logger.New()
+	zap.ReplaceGlobals(zapLogger)
 
 	server, err := api.NewServer()
 	if err != nil {
-		log.Fatal().Err(err).Msg("")
+		zap.L().Fatal("Failed to create server", zap.Error(err))
 	}
 
-	log.Info().Msgf("Server is running on %s", server.Addr)
+	zap.L().Info(fmt.Sprintf("Server is running on %s", server.Addr))
 	if err := server.Listen(server.Addr); err != nil {
-		log.Fatal().Err(err).Msg("")
+		zap.L().Fatal("Failure while running the server", zap.Error(err))
 	}
 }

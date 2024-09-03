@@ -7,12 +7,12 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/providers/microsoftonline"
-	"github.com/rs/zerolog/log"
 	"github.com/shareed2k/goth_fiber"
 	"github.com/spf13/viper"
 	"github.com/studentkickoff/gobp/internal/api/middlewares"
 	"github.com/studentkickoff/gobp/internal/api/util"
 	"github.com/studentkickoff/gobp/pkg/sqlc"
+	"go.uber.org/zap"
 )
 
 type AuthRouter struct {
@@ -45,12 +45,12 @@ func (r *AuthRouter) LoginCallbackHandler(c *fiber.Ctx) error {
 	// if we get logged out, we should overwrite this is with a shouldLogout = false
 	user, err := goth_fiber.CompleteUserAuth(c)
 	if err != nil {
-		log.Error().Err(err).Msg("failed to complete user auth")
+		zap.L().Error("failed to complete user auth", zap.Error(err))
 	}
 
 	dbUser, err := r.db.GetUserByUid(c.Context(), user.UserID)
 	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
-		log.Error().Err(err).Msg("failed to search user")
+		zap.L().Error("failed to search user", zap.Error(err))
 		return fiber.ErrInternalServerError
 	}
 
@@ -61,14 +61,14 @@ func (r *AuthRouter) LoginCallbackHandler(c *fiber.Ctx) error {
 			Email: user.Email,
 		})
 		if err != nil {
-			log.Error().Err(err).Msg("failed to insert user")
+			zap.L().Error("failed to insert user", zap.Error(err))
 			return fiber.ErrInternalServerError
 		}
 	}
 
 	err = util.StoreInSession("userId", dbUser.ID, c)
 	if err != nil {
-		log.Error().Err(err).Msg("failed to store user in session")
+		zap.L().Error("failed to store user in session", zap.Error(err))
 		return fiber.ErrInternalServerError
 	}
 
@@ -77,7 +77,7 @@ func (r *AuthRouter) LoginCallbackHandler(c *fiber.Ctx) error {
 
 func (r *AuthRouter) LogoutHandler(c *fiber.Ctx) error {
 	if err := goth_fiber.Logout(c); err != nil {
-		log.Error().Err(err).Msg("failed to logout")
+		zap.L().Error("failed to logout", zap.Error(err))
 	}
 
 	return c.SendString("logout")

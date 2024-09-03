@@ -5,12 +5,11 @@ import (
 
 	"github.com/getsentry/sentry-go"
 	sentryfiber "github.com/getsentry/sentry-go/fiber"
-	"github.com/gofiber/contrib/fiberzerolog"
+	"github.com/gofiber/contrib/fiberzap"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/gofiber/storage/postgres/v3"
 	"github.com/gofiber/storage/redis/v3"
-	"github.com/rs/zerolog/log"
 	"github.com/shareed2k/goth_fiber"
 	"github.com/studentkickoff/gobp/internal/api/auth"
 	"github.com/studentkickoff/gobp/internal/api/middlewares"
@@ -18,6 +17,7 @@ import (
 	"github.com/studentkickoff/gobp/internal/database"
 	"github.com/studentkickoff/gobp/pkg/config"
 	"github.com/studentkickoff/gobp/pkg/sqlc"
+	"go.uber.org/zap"
 )
 
 type Server struct {
@@ -30,7 +30,7 @@ func NewServer() (*Server, error) {
 	db, pool, err := database.New()
 
 	if err != nil {
-		log.Error().Str("module", "database").Err(err).Msg("")
+		zap.L().Error("failed to get session", zap.Error(err), zap.String("module", "database"))
 		return nil, err
 	}
 
@@ -63,8 +63,9 @@ func NewServer() (*Server, error) {
 		Repanic:         true,
 		WaitForDelivery: false,
 	}))
-	app.Use(fiberzerolog.New(fiberzerolog.Config{
-		Logger: &log.Logger,
+
+	app.Use(fiberzap.New(fiberzap.Config{
+		Logger: zap.L(),
 	}))
 
 	api := app.Group("/api")

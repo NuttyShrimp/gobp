@@ -2,9 +2,9 @@ package user
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/rs/zerolog/log"
 	"github.com/studentkickoff/gobp/internal/database/dto"
 	"github.com/studentkickoff/gobp/pkg/sqlc"
+	"go.uber.org/zap"
 )
 
 type UserRouter struct {
@@ -31,7 +31,7 @@ func (r *UserRouter) GetMeHandler(c *fiber.Ctx) error {
 
 	user, err := r.db.GetUser(c.Context(), userId)
 	if err != nil {
-		log.Error().Int32("UserID", userId).Err(err).Msg("failed to get user")
+		zap.L().Error("failed to get user", zap.Error(err), zap.Int32("userID", userId))
 		return fiber.ErrInternalServerError
 	}
 

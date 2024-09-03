@@ -2,14 +2,14 @@ package middlewares
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/rs/zerolog/log"
 	"github.com/shareed2k/goth_fiber"
+	"go.uber.org/zap"
 )
 
 func ProtectedRoute(c *fiber.Ctx) error {
 	session, err := goth_fiber.SessionStore.Get(c)
 	if err != nil {
-		log.Error().Err(err).Msg("failed to get session")
+		zap.L().Error("failed to get session", zap.Error(err))
 		return fiber.ErrInternalServerError
 	}
 	if session.Fresh() {
