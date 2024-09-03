@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query"
 import { Outlet } from "react-router-dom"
 import { useAuth } from "../../lib/context/auth";
-import { toast } from "sonner";
+import { notifications } from "@mantine/notifications";
+import { AppShell } from "../appshell";
 
 export const AuthenticatedLayout = () => {
   const { isLoading, isError, data } = useQuery({
@@ -13,7 +14,6 @@ export const AuthenticatedLayout = () => {
     refetchOnWindowFocus: false,
   })
   const { logout } = useAuth();
-
   if (isLoading) {
     return (
       <div className="h-svh w-svw flex flex-col items-center justify-center">
@@ -24,7 +24,10 @@ export const AuthenticatedLayout = () => {
 
   if (isError || data?.status !== 200) {
     logout();
-    toast.warning("Session has expired...")
+    notifications.show({
+      variant: "warning",
+      message: "Session has expired..."
+    })
     return (
       <div className="h-svh w-svw flex flex-col items-center justify-center">
         <p>Logging out...</p>
@@ -33,6 +36,10 @@ export const AuthenticatedLayout = () => {
   }
 
   return (
-    <Outlet />
+    <>
+      <AppShell>
+        <Outlet />
+      </AppShell>
+    </>
   )
 }

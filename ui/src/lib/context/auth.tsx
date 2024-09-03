@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { PropsWithChildren, createContext, useContext, useEffect, useState } from "react";
 import { User } from "../types";
-import { toast } from "sonner";
+import { notifications } from "@mantine/notifications";
 
 declare type AuthContext = {
   loggedIn: boolean;
@@ -35,7 +35,10 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     if (!resp.ok) {
       console.error("Failed to log out");
     }
-    toast.success("Logged Out!");
+    notifications.show({
+      variant: "success",
+      message: "Logged Out!"
+    });
     setLoggedIn(false);
     setName("");
     location.href = "/login"
