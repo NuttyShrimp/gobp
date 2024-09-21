@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
 )
 
@@ -14,6 +15,10 @@ func bindEnv(key string) {
 }
 
 func Init() error {
+	if err := godotenv.Load(); err != nil {
+		return err
+	}
+
 	viper.AutomaticEnv()
 	env := GetDefaultString("app.env", "development")
 
