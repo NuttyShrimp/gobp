@@ -84,6 +84,10 @@ func NewServer() (*Server, error) {
 		app.Static("*", "./public/index.html")
 	}
 
+	app.All("/api*", func(c *fiber.Ctx) error {
+		return c.SendStatus(404)
+	})
+
 	port := config.GetDefaultInt("server.port", 8000)
 	host := config.GetDefaultString("server.host", "127.0.0.1")
 
