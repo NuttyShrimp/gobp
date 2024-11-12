@@ -1,3 +1,4 @@
+import './lib/instrument'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { router } from './router';

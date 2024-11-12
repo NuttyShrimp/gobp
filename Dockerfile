@@ -23,7 +23,10 @@ WORKDIR /frontend/ui
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
 
 FROM base-frontend AS frontend-build
+
 WORKDIR /frontend/ui
+ARG SENTRY_AUTH_TOKEN
+
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 RUN pnpm run build
 
