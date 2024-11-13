@@ -18,6 +18,8 @@ func NewAPI(db *sqlc.Queries, router fiber.Router) *UserRouter {
 		db,
 	}
 
+	api.Router()
+
 	return api
 }
 

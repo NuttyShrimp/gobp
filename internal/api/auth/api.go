@@ -30,6 +30,8 @@ func NewAPI(db *sqlc.Queries, router fiber.Router) *AuthRouter {
 		db,
 	}
 
+	api.Router()
+
 	return api
 }
 

@@ -70,13 +70,11 @@ func NewServer() (*Server, error) {
 
 	api := app.Group("/api")
 
-	authAPI := auth.NewAPI(db, api)
-	authAPI.Router()
+	auth.NewAPI(db, api)
 
 	protectedApi := api.Use(middlewares.ProtectedRoute)
 
-	userAPI := user.NewAPI(db, protectedApi)
-	userAPI.Router()
+	user.NewAPI(db, protectedApi)
 
 	if env != "development" {
 		app.Static("/", "./public")
