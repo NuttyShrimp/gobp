@@ -6,6 +6,7 @@ import (
 	"github.com/studentkickoff/gobp/internal/api"
 	"github.com/studentkickoff/gobp/pkg/config"
 	"github.com/studentkickoff/gobp/pkg/logger"
+	"github.com/studentkickoff/gobp/pkg/mjml"
 	"go.uber.org/zap"
 )
 
@@ -17,6 +18,12 @@ func main() {
 
 	zapLogger := logger.New()
 	zap.ReplaceGlobals(zapLogger)
+
+	go func() {
+		if err := mjml.Init(); err != nil {
+			panic(fmt.Sprintf("Failed to setup mjml binary: %+v", err))
+		}
+	}()
 
 	server, err := api.NewServer()
 	if err != nil {

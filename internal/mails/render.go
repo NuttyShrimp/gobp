@@ -2,13 +2,12 @@ package mails
 
 import (
 	"bytes"
-	"context"
 	"fmt"
 	"html/template"
 	"reflect"
 
-	"github.com/Boostport/mjml-go"
 	"github.com/studentkickoff/gobp/pkg/config"
+	"github.com/studentkickoff/gobp/pkg/mjml"
 )
 
 var layoutTmpl *template.Template
@@ -45,5 +44,5 @@ func renderHTMLMail(name string, data interface{}) (string, error) {
 	}
 	mjmlStr := tmplWriter.String()
 
-	return mjml.ToHTML(context.Background(), mjmlStr, mjml.WithMinify(true))
+	return mjml.Convert(mjmlStr)
 }
