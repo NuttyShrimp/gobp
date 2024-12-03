@@ -80,6 +80,7 @@ func (r *AuthRouter) LoginCallbackHandler(c *fiber.Ctx) error {
 func (r *AuthRouter) LogoutHandler(c *fiber.Ctx) error {
 	if err := goth_fiber.Logout(c); err != nil {
 		zap.L().Error("failed to logout", zap.Error(err))
+		return fiber.ErrInternalServerError
 	}
 
 	return c.SendString("logout")

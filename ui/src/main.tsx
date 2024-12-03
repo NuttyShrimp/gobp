@@ -5,7 +5,6 @@ import { router } from './router';
 import { RouterProvider } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './lib/query';
-import { AuthProvider } from './lib/context/auth';
 import { skoTheme } from './lib/theme';
 import { MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
@@ -24,10 +23,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <QueryClientProvider client={queryClient}>
       <MantineProvider theme={skoTheme}>
         <ModalsProvider>
-          <AuthProvider>
-            <Notifications />
-            <RouterProvider router={router} />
-          </AuthProvider>
+          <Notifications />
+          <RouterProvider router={router} />
         </ModalsProvider>
       </MantineProvider>
     </QueryClientProvider>

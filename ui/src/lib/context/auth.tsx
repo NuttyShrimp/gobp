@@ -2,9 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import { PropsWithChildren, createContext, useContext, useEffect, useState } from "react";
 import { User } from "../types";
 import { notifications } from "@mantine/notifications";
+import { useNavigate } from "react-router-dom";
 
 declare type AuthContext = {
-  loggedIn: boolean;
   name: string;
   logout: () => void;
 }
@@ -12,8 +12,8 @@ declare type AuthContext = {
 const authContext = createContext<AuthContext | undefined>(undefined);
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {
-  const [loggedIn, setLoggedIn] = useState(false);
   const [name, setName] = useState('');
+  const navigate = useNavigate();
   const { data } = useQuery<User>({
     queryKey: ["user"],
     queryFn: async () => {
@@ -25,13 +25,12 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
   useEffect(() => {
     if (data) {
-      setLoggedIn(true);
       setName(data.name)
     }
   }, [data])
 
   const logout = async () => {
-    const resp = await fetch("/auth/logout")
+    const resp = await fetch("/api/auth/logout")
     if (!resp.ok) {
       console.error("Failed to log out");
     }
@@ -39,15 +38,13 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       variant: "success",
       message: "Logged Out!"
     });
-    setLoggedIn(false);
     setName("");
-    location.href = "/login"
+    navigate("/login")
   }
 
   return (
     <authContext.Provider value={{
       name,
-      loggedIn,
       logout,
     }}>
       {children}

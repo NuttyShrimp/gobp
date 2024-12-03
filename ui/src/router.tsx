@@ -4,6 +4,7 @@ import { LoginPage } from "./pages/auth/login";
 import { AuthenticatedLayout } from "./components/layout/Authenticated";
 import { wrapCreateBrowserRouter } from "@sentry/react";
 import { SentryErrorBoundary } from "./components/ErrorBoundary";
+import { AuthProvider } from "./lib/context/auth";
 
 const sentryCreateBrowserRouter = wrapCreateBrowserRouter(createBrowserRouter);
 
@@ -14,7 +15,7 @@ export const router = sentryCreateBrowserRouter([
     children: [
       {
         path: "",
-        element: <AuthenticatedLayout />,
+        element: <AuthProvider><AuthenticatedLayout /></AuthProvider>,
         children: [
           {
             element: <IndexPage />,

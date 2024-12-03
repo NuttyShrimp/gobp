@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query"
-import { Outlet } from "react-router-dom"
+import { Outlet, useNavigate } from "react-router-dom"
 import { useAuth } from "../../lib/context/auth";
 import { notifications } from "@mantine/notifications";
 import { AppShell } from "../appshell";
 
 export const AuthenticatedLayout = () => {
+  const navigate = useNavigate();
   const { isLoading, isError, data } = useQuery({
     queryKey: ["session"],
     queryFn: () => fetch("/api/auth/session", {
@@ -23,7 +24,7 @@ export const AuthenticatedLayout = () => {
   }
 
   if (isError || data?.status !== 200) {
-    logout();
+    Promise.resolve(logout()).then(() => navigate("/"))
     notifications.show({
       variant: "warning",
       message: "Session has expired..."
