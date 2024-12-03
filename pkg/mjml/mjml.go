@@ -14,7 +14,7 @@ func Init() error {
 	if !os.IsExist(err) {
 		return err
 	}
-	_, err = os.Stat("tmp/mrml-cli")
+	_, err = os.Stat("tmp/mjm-converter")
 	if !os.IsNotExist(err) {
 		return err
 	}
