@@ -7,19 +7,25 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+
+	"github.com/studentkickoff/gobp/pkg/config"
+	"go.uber.org/zap"
 )
 
 func Init() error {
 	err := os.Mkdir("tmp", os.ModeDir)
-	if !os.IsExist(err) {
+	if err != nil && !os.IsExist(err) {
 		return err
 	}
-	_, err = os.Stat("tmp/mjm-converter")
-	if !os.IsNotExist(err) {
+	s, err := os.Stat("tmp/mjml-converter")
+	if err != nil && !os.IsNotExist(err) {
 		return err
+	}
+	if s != nil {
+		return nil
 	}
 
-	fmt.Println("mjml cli not installed!")
+	zap.L().Info("MJML CLI not found, downloading it")
 	ghAssetName := "mjml-converter-"
 
 	switch runtime.GOARCH {
@@ -28,20 +34,21 @@ func Init() error {
 	case "arm64":
 		ghAssetName += "aarch64-"
 	default:
-		panic("Unsupported arch for mjml cli")
+		zap.L().Panic("Unsupported arch for mjml cli")
 	}
 
 	switch runtime.GOOS {
 	case "darwin":
 		ghAssetName += "apple-darwin.tar.gz"
 	case "linux":
-		// No proper way to check if gnu or musl. So going for gnu
-		ghAssetName += "unknown-linux-gnu.tar.gz"
+		ghAssetName += "unknown-linux-"
+		ghAssetName += config.GetDefaultString("mails.linker", "gnu")
+		ghAssetName += ".tar.gz"
 	default:
-		panic("This CLI is not supported on your machine")
+		zap.L().Panic("This CLI is not supported on your machine")
 	}
 
-	fmt.Printf("%s - %s - %s", runtime.GOARCH, runtime.GOOS, ghAssetName)
+	zap.L().Info("Downloading MJML CLI", zap.String("asset", ghAssetName), zap.String("arch", runtime.GOARCH), zap.String("os", runtime.GOOS))
 
 	return fetchRelease(ghAssetName)
 }

@@ -6,10 +6,11 @@ name = "MyApp"
 dsn = ""
 host = "https://am.studentkickoff.be"
 
-[mail]
+[mails]
 provider="smtp"
+linker="musl"
 
-[mail.smtp]
+[mails.smtp]
 address='smtp.eu.mailgun.org'
 port=587
 domain='studentkickoff.be'

@@ -6,8 +6,9 @@ name = "MyApp"
 dsn = ""
 host = "http://localhost:3000"
 
-[mail]
+[mails]
 provider="browser"
+linker="gnu"
 
 [auth.sko]
 url = "http://localhost:3004"

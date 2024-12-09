@@ -21,8 +21,8 @@ func sendMailViaSMTP(HTMLtmpl, TextTmpl, recipient, subject string) error {
 	m.SetBodyString(mail.TypeTextHTML, HTMLtmpl)
 	m.SetBodyString(mail.TypeTextPlain, TextTmpl)
 
-	c, err := mail.NewClient(config.GetString("mail.smtp.address"), mail.WithPort(config.GetInt("mail.smtp.port")), mail.WithSMTPAuth(mail.SMTPAuthLogin),
-		mail.WithUsername(config.GetString("mail.smtp.username")), mail.WithPassword(config.GetString("mail.smtp.password")))
+	c, err := mail.NewClient(config.GetString("mails.smtp.address"), mail.WithPort(config.GetInt("mails.smtp.port")), mail.WithSMTPAuth(mail.SMTPAuthLogin),
+		mail.WithUsername(config.GetString("mails.smtp.username")), mail.WithPassword(config.GetString("mails.smtp.password")))
 	if err != nil {
 		return err
 	}
