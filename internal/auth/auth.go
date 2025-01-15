@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/aidenwallis/go-utils/utils"
 	"github.com/studentkickoff/gobp/internal/redis"
@@ -31,7 +32,7 @@ func Can(ctx context.Context, userId, permission string) (bool, error) {
 		if err != nil {
 			return false, err
 		}
-		_, err = redis.Client.SetEx(ctx, redisKey, strings.Join(newPerms, ","), 3600).Result()
+		_, err = redis.Client.SetEx(ctx, redisKey, strings.Join(newPerms, ","), 3600*time.Second).Result()
 		if err != nil {
 			return false, err
 		}
