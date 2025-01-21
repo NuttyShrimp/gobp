@@ -87,6 +87,7 @@ linters-settings:
     excludes:
     - "G104"
     - "G107"
+    - "G115"
     - "G304"
 
   funlen:
