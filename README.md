@@ -19,11 +19,9 @@ A new BP for a full stack Go + React program
 - Sqlc
 
 ## Used React libraries
-- [React hook form](https://react-hook-form.com)
-- [Shadcn UI](https://ui.shadcn.com)
+- [Mantine UI](https://mantine.dev)
 - [Tanstack Query](https://tanstack.com/query/latest)
 - [React router](https://reactrouter.com)
-- [Sonner](https://sonner.emilkowal.ski/)
 
 ## Useful flows
 

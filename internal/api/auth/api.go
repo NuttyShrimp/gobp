@@ -22,7 +22,7 @@ type AuthRouter struct {
 
 func NewAPI(db *sqlc.Queries, router fiber.Router) *AuthRouter {
 	goth.UseProviders(
-		microsoftonline.New(viper.GetString("auth.msentra.client_id"), viper.GetString("auth.msentra.client_secret"), viper.GetString("auth.msentra.callbackURL")),
+		microsoftonline.New(config.GetString("auth.msentra.client_id"), config.GetString("auth.msentra.client_secret"), config.GetString("auth.msentra.callbackURL")),
 	)
 
 	api := &AuthRouter{
@@ -80,8 +80,13 @@ func (r *AuthRouter) LoginCallbackHandler(c *fiber.Ctx) error {
 func (r *AuthRouter) LogoutHandler(c *fiber.Ctx) error {
 	if err := goth_fiber.Logout(c); err != nil {
 		zap.L().Error("failed to logout", zap.Error(err))
+	}
+	session, err := goth_fiber.SessionStore.Get(c)
+	if err != nil {
+		zap.L().Error("failed to get session", zap.Error(err))
 		return fiber.ErrInternalServerError
 	}
+	session.Destroy()
 
 	return c.SendString("logout")
 }
