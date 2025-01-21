@@ -24,7 +24,12 @@ setup:
 	else \
 			echo "You chose not to install goose."; \
 	fi
-
+	@read -p "Go's 'sqlc' is not installed on your machine. Do you want to install it? [Y/n] " choice; \
+	if [ "$$choice" != "n" ] && [ "$$choice" != "N" ]; then \
+			go install github.com/sqlc-dev/sqlc/cmd/sqlc@v1.27.0 \
+	else \
+			echo "You chose not to install sqlc."; \
+	fi
 
 goose:
 	@read -p "Action: " action; \
