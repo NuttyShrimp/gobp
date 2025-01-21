@@ -14,6 +14,10 @@ export const router = sentryCreateBrowserRouter([
     errorElement: import.meta.env.PROD && <SentryErrorBoundary />,
     children: [
       {
+        path: "login",
+        element: <LoginPage />,
+      },
+      {
         path: "",
         element: <AuthProvider><AuthenticatedLayout /></AuthProvider>,
         children: [
@@ -22,10 +26,6 @@ export const router = sentryCreateBrowserRouter([
             index: true,
           }
         ]
-      },
-      {
-        path: "login",
-        element: <LoginPage />,
       },
     ]
   },

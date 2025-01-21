@@ -17,7 +17,8 @@ export default defineConfig(({ mode }) => {
       sentryVitePlugin({
         org: "studentkickoff",
         project: "join-go",
-        authToken: process.env.SENTRY_AUTH_TOKEN
+        authToken: process.env.SENTRY_AUTH_TOKEN,
+        telemetry: false,
       })
     ],
     resolve: {

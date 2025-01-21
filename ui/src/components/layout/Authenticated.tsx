@@ -24,7 +24,7 @@ export const AuthenticatedLayout = () => {
   }
 
   if (isError || data?.status !== 200) {
-    Promise.resolve(logout()).then(() => navigate("/"))
+    Promise.resolve(logout()).then(() => navigate("/login"))
     notifications.show({
       variant: "warning",
       message: "Session has expired..."

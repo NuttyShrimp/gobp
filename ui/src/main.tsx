@@ -1,6 +1,6 @@
 import './lib/instrument'
 import React from 'react'
-import ReactDOM from 'react-dom/client'
+import { createRoot } from 'react-dom/client'
 import { router } from './router';
 import { RouterProvider } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -17,8 +17,19 @@ import '@mantine/dates/styles.layer.css'
 import '@mantine/dropzone/styles.layer.css'
 import '@mantine/notifications/styles.layer.css'
 import '@mantine/spotlight/styles.css';
+import { reactErrorHandler } from '@sentry/react';
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+const root = createRoot(document.getElementById('root')!, {
+  // Callback called when an error is thrown and not caught by an ErrorBoundary.
+  onUncaughtError: reactErrorHandler((error, errorInfo) => {
+    console.warn('Uncaught error', error, errorInfo.componentStack);
+  }),
+  // Callback called when React catches an error in an ErrorBoundary.
+  onCaughtError: reactErrorHandler(),
+  // Callback called when React automatically recovers from errors.
+  onRecoverableError: reactErrorHandler(),
+});
+root.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <MantineProvider theme={skoTheme}>
@@ -29,4 +40,4 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       </MantineProvider>
     </QueryClientProvider>
   </React.StrictMode>,
-)
+);
