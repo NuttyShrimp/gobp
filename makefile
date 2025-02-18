@@ -33,10 +33,10 @@ setup:
 
 goose:
 	@read -p "Action: " action; \
-	@goose -dir ./db/migrations postgres "user=postgres password=password dbname=gobp sslmode=disable" $$action
+	@goose -dir ./db/migrations postgres "user=postgres password=password host=localhost dbname=gobp sslmode=disable" $$action
 
 migrate:
-	@goose -dir ./db/migrations postgres "user=postgres password=password dbname=gobp sslmode=disable" up
+	@goose -dir ./db/migrations postgres "user=postgres password=password host=localhost dbname=gobp sslmode=disable" up
 
 create-migration:
 	@read -p "Enter migration name: " name; \
