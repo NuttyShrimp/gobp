@@ -8,9 +8,9 @@ import (
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/providers/microsoftonline"
 	"github.com/shareed2k/goth_fiber"
-	"github.com/spf13/viper"
 	"github.com/studentkickoff/gobp/internal/api/middlewares"
 	"github.com/studentkickoff/gobp/internal/api/util"
+	"github.com/studentkickoff/gobp/pkg/config"
 	"github.com/studentkickoff/gobp/pkg/sqlc"
 	"go.uber.org/zap"
 )
@@ -86,7 +86,10 @@ func (r *AuthRouter) LogoutHandler(c *fiber.Ctx) error {
 		zap.L().Error("failed to get session", zap.Error(err))
 		return fiber.ErrInternalServerError
 	}
-	session.Destroy()
+	if err := session.Destroy(); err != nil {
+		zap.L().Error("failed to destroy", zap.Error(err))
+		return fiber.ErrInternalServerError
+	}
 
 	return c.SendString("logout")
 }
