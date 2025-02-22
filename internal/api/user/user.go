@@ -2,20 +2,19 @@ package user
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/studentkickoff/gobp/internal/database/dto"
-	"github.com/studentkickoff/gobp/pkg/sqlc"
+	"github.com/studentkickoff/gobp/pkg/db/repository"
 	"go.uber.org/zap"
 )
 
 type UserRouter struct {
-	router fiber.Router
-	db     *sqlc.Queries
+	router   fiber.Router
+	userRepo repository.User
 }
 
-func NewAPI(db *sqlc.Queries, router fiber.Router) *UserRouter {
+func NewAPI(repo *repository.Repository, router fiber.Router) *UserRouter {
 	api := &UserRouter{
 		router,
-		db,
+		repo.NewUser(),
 	}
 
 	api.Router()
@@ -31,11 +30,14 @@ func (r *UserRouter) Router() {
 func (r *UserRouter) GetMeHandler(c *fiber.Ctx) error {
 	userId := c.Locals("userId").(int32)
 
-	user, err := r.db.GetUser(c.Context(), userId)
+	user, err := r.userRepo.GetById(c.Context(), userId)
 	if err != nil {
 		zap.L().Error("failed to get user", zap.Error(err), zap.Int32("userID", userId))
 		return fiber.ErrInternalServerError
 	}
+	if user.ID == 0 {
+		return fiber.ErrNotFound
+	}
 
-	return c.JSON(dto.UserDTO(user))
+	return c.JSON(user)
 }

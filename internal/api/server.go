@@ -14,25 +14,40 @@ import (
 	"github.com/studentkickoff/gobp/internal/api/auth"
 	"github.com/studentkickoff/gobp/internal/api/middlewares"
 	"github.com/studentkickoff/gobp/internal/api/user"
-	"github.com/studentkickoff/gobp/internal/database"
 	"github.com/studentkickoff/gobp/pkg/config"
-	"github.com/studentkickoff/gobp/pkg/sqlc"
+	"github.com/studentkickoff/gobp/pkg/db"
+	"github.com/studentkickoff/gobp/pkg/db/repository"
 	"go.uber.org/zap"
 )
 
 type Server struct {
 	*fiber.App
 	Addr string
-	db   *sqlc.Queries
+	db   db.DB
 }
 
 func NewServer() (*Server, error) {
-	db, pool, err := database.New()
+	dbOptions := db.PSQLOptions{
+		Host:     config.GetString("db.host"),
+		Port:     uint16(config.GetInt("db.port")),
+		Database: config.GetString("db.database"),
+		User:     config.GetString("db.user"),
+		Password: config.GetString("db.password"),
+	}
 
+	dbPool, err := db.NewPgxPool(dbOptions)
+	if err != nil {
+		zap.L().Error("failed to create pool", zap.Error(err), zap.String("module", "database"))
+		return nil, err
+	}
+
+	db, err := db.NewPSQL(dbOptions)
 	if err != nil {
 		zap.L().Error("failed to get session", zap.Error(err), zap.String("module", "database"))
 		return nil, err
 	}
+
+	repo := repository.New(db)
 
 	env := config.GetDefaultString("app.env", "development")
 	var sessionStore fiber.Storage
@@ -40,7 +55,7 @@ func NewServer() (*Server, error) {
 		sessionStore = redis.New()
 	} else {
 		sessionStore = postgres.New(postgres.Config{
-			DB: pool,
+			DB: dbPool,
 		})
 	}
 
@@ -70,11 +85,11 @@ func NewServer() (*Server, error) {
 
 	api := app.Group("/api")
 
-	auth.NewAPI(db, api)
+	auth.NewAPI(repo, api)
 
 	protectedApi := api.Use(middlewares.ProtectedRoute)
 
-	user.NewAPI(db, protectedApi)
+	user.NewAPI(repo, protectedApi)
 
 	if env != "development" {
 		app.Static("/", "./public")

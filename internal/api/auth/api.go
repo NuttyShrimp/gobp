@@ -1,33 +1,30 @@
 package auth
 
 import (
-	"errors"
-
 	"github.com/gofiber/fiber/v2"
-	"github.com/jackc/pgx/v5"
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/providers/microsoftonline"
 	"github.com/shareed2k/goth_fiber"
 	"github.com/studentkickoff/gobp/internal/api/middlewares"
 	"github.com/studentkickoff/gobp/internal/api/util"
 	"github.com/studentkickoff/gobp/pkg/config"
-	"github.com/studentkickoff/gobp/pkg/sqlc"
+	"github.com/studentkickoff/gobp/pkg/db/repository"
 	"go.uber.org/zap"
 )
 
 type AuthRouter struct {
-	router fiber.Router
-	db     *sqlc.Queries
+	router   fiber.Router
+	userRepo repository.User
 }
 
-func NewAPI(db *sqlc.Queries, router fiber.Router) *AuthRouter {
+func NewAPI(repo *repository.Repository, router fiber.Router) *AuthRouter {
 	goth.UseProviders(
 		microsoftonline.New(config.GetString("auth.msentra.client_id"), config.GetString("auth.msentra.client_secret"), config.GetString("auth.msentra.callbackURL")),
 	)
 
 	api := &AuthRouter{
 		router,
-		db,
+		repo.NewUser(),
 	}
 
 	api.Router()
@@ -50,19 +47,14 @@ func (r *AuthRouter) LoginCallbackHandler(c *fiber.Ctx) error {
 		zap.L().Error("failed to complete user auth", zap.Error(err))
 	}
 
-	dbUser, err := r.db.GetUserByUid(c.Context(), user.UserID)
-	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
+	dbUser, err := r.userRepo.GetByUid(c.Context(), user.UserID)
+	if err != nil {
 		zap.L().Error("failed to search user", zap.Error(err))
 		return fiber.ErrInternalServerError
 	}
 
 	if dbUser.ID == 0 {
-		dbUser, err = r.db.CreateUser(c.Context(), sqlc.CreateUserParams{
-			Name:  user.Name,
-			Uid:   user.UserID,
-			Email: user.Email,
-		})
-		if err != nil {
+		if err := r.userRepo.Create(c.Context(), dbUser); err != nil {
 			zap.L().Error("failed to insert user", zap.Error(err))
 			return fiber.ErrInternalServerError
 		}
