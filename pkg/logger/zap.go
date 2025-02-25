@@ -14,6 +14,8 @@ func New() *zap.Logger {
 	if env == "development" {
 		logger = zap.Must(zap.NewDevelopment(zap.AddStacktrace(zap.WarnLevel)))
 	} else {
+		cfg := zap.NewProductionConfig()
+		cfg.Level = zap.NewAtomicLevelAt(zap.WarnLevel)
 		logger = zap.Must(zap.NewProduction())
 	}
 	logger = logger.With(zap.String("env", env))
