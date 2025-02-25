@@ -16,7 +16,7 @@ func bindEnv(key string) {
 
 func Init() error {
 	if err := godotenv.Load(); err != nil {
-		return err
+		fmt.Println("Failed to load .env file", err)
 	}
 
 	viper.AutomaticEnv()
