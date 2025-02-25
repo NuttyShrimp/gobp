@@ -1,5 +1,5 @@
 # First stage: Get Golang image from DockerHub.
-FROM golang:1.21.10 AS backend-builder
+FROM golang:1.23.2 AS backend-builder
 
 # Set our working directory for this stage.
 WORKDIR /app
@@ -8,14 +8,17 @@ WORKDIR /app
 COPY . .
 
 # Get and install all dependencies.
-RUN CGO_ENABLED=0 go build -o server ./cmd/api/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -o server ./cmd/api/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -o migrate ./migrate.go
 
-FROM node:20 AS base-frontend
+FROM node:22 AS base-frontend
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
+# corepack being fucked as usual
+RUN npm i -g corepack@latest
 RUN corepack enable
-COPY . /frontend
+COPY ./ui /frontend/ui
 WORKDIR /frontend
 
 FROM base-frontend AS frontend-prod-deps
@@ -38,7 +41,16 @@ WORKDIR /app
 
 # Copy our executable and our built React application.
 COPY --from=backend-builder /app/server .
+COPY --from=backend-builder /app/migrate .
 COPY --from=frontend-build /frontend/public ./public
+COPY ./config ./config
+
+# This is for sentry sourcemaps
+COPY ./cmd ./cmd
+COPY ./db ./db
+COPY ./pkg ./pkg
+COPY ./internal ./internal
+COPY ./views ./views
 
 ENV APP_ENV=production
 
