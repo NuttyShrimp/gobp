@@ -32,7 +32,7 @@ func Can(ctx context.Context, userId, permission string) (bool, error) {
 		if err != nil {
 			return false, err
 		}
-		_, err = redis.Client.SetEx(ctx, redisKey, strings.Join(newPerms, ","), 3600*time.Second).Result()
+		_, err = redis.Client.SetEx(ctx, redisKey, strings.Join(newPerms, ","), 300*time.Second).Result()
 		if err != nil {
 			return false, err
 		}
