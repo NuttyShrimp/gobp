@@ -25,10 +25,15 @@ A new BP for a full stack Go + React program
 
 ## Useful flows
 
+### Setup
+
+Make sure you have atleast go 1.24 installed
+Then run `make setup`
+
 ### Adding a new typed query (sqlc)
 
 1) Add your new query to db/queries/{target}.sql
-2) run `sqlc generate`
+2) run `make query`
 3) Enjoy your statically typed query
 
 ### Adding a migration
@@ -43,7 +48,9 @@ A new BP for a full stack Go + React program
 
 ## Deployment
 
-It is recommended to run the application in an docker container
+It is recommended to run the application in an docker container.
+
+If you have healthchecks or something similar running, it is recommended to run the run command with `--init`
 
 It need at least the following additional resources:
 - Postgres Database
