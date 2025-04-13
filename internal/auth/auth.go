@@ -23,8 +23,7 @@ type authPermissions struct {
 func Can(ctx context.Context, userId, permission string) (bool, error) {
 	var permissions []string
 	redisKey := fmt.Sprintf("%s:auth:permissions", userId)
-	permissionStr, err := redis.Client.Get(ctx, redisKey).Result()
-	if err == nil {
+	if permissionStr, err := redis.Client.Get(ctx, redisKey).Result(); err != nil {
 		permissions = strings.Split(permissionStr, ",")
 	} else if err == redis.Nil {
 		// Fetch perms from auth

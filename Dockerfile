@@ -1,5 +1,5 @@
 # First stage: Get Golang image from DockerHub.
-FROM golang:1.23.2 AS backend-builder
+FROM golang:1.24.2 AS backend-builder
 
 # Set our working directory for this stage.
 WORKDIR /app
