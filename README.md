@@ -5,6 +5,7 @@ A new BP for a full stack Go + React program
 ## Development setup
 
 - [Golang >= 1.21](https://go.dev/)
+- [Flox](https://flox.dev/) (optional)
 - [Air](https://github.com/air-verse/air/tree/master?tab=readme-ov-file#installation)
 - [Goose -> Migrations](https://github.com/pressly/goose?tab=readme-ov-file#install)
 - [Sqlc -> typed queries](https://docs.sqlc.dev/en/latest/overview/install.html)
@@ -22,6 +23,14 @@ A new BP for a full stack Go + React program
 - [Mantine UI](https://mantine.dev)
 - [Tanstack Query](https://tanstack.com/query/latest)
 - [React router](https://reactrouter.com)
+
+## Development environment
+
+If you want an easy development environment with a DB, BE dev server & FE dev server I recommend installing flox. After installing you can activate the environment with:
+- `flox activate` if you don't want to run the background services
+- `flox activate --start-services` to directly start the backgrond services when entering the env
+
+To see the logs of all the services you can use `flox services logs --follow`
 
 ## Useful flows
 
