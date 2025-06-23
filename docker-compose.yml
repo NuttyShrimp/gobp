@@ -8,7 +8,61 @@ services:
     volumes:
       - gobp_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5431:5432"
+
+  redis:
+    image: redis:8-alpine
+    volumes:
+      - gobp_redis_data:/data
+
+  backend:
+    build:
+      dockerfile: Dockerfile.dev
+    command: sh -c "infisical run --projectId <projectId> --command 'go mod tidy && air -c .air.toml'"
+    ports:
+      - 3001:3001
+    environment:
+      - INFISICAL_TOKEN
+      - INFISICAL_API_URL
+    volumes:
+      - .:/backend
+      - /backend/ui
+      - backend_packages:/go/pkg/mod
+    depends_on:
+      - db
+      - redis
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  frontend:
+    build:
+      context: ui
+      dockerfile: Dockerfile.dev
+    ports:
+      - 3000:3000
+    volumes:
+      - ./ui:/frontend
+      - frontend_packages:/frontend/node_modules
+    depends_on:
+      - backend
+
+  seed:
+    build:
+      dockerfile: Dockerfile.dev
+    command: sh -c "infisical run --projectId <projectId> --command 'go build -o seed ./cmd/seed/ && ./seed'"
+    restart: no
+    volumes:
+      - .:/backend
+      - /backend/ui
+      - backend_packages:/go/pkg/mod
+    depends_on:
+      - db
+      - redis
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 volumes:
   gobp_data:
+  gobp_redis_data:
+  backend_packages:
+  frontend_packages:

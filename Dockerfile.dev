@@ -1,0 +1,14 @@
+FROM golang:1.24.2-alpine3.21
+
+WORKDIR /backend
+
+RUN apk add --no-cache make
+RUN apk add --no-cache bash curl && curl -1sLf \
+'https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.alpine.sh' | bash \
+&& apk add infisical
+
+RUN go install github.com/air-verse/air@latest
+COPY .air.toml .
+
+COPY go.mod go.sum ./
+

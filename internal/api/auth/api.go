@@ -6,7 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/jackc/pgx/v5"
 	"github.com/markbates/goth"
-	"github.com/markbates/goth/providers/microsoftonline"
+	"github.com/markbates/goth/providers/azureadv2"
 	"github.com/shareed2k/goth_fiber"
 	"github.com/studentkickoff/gobp/internal/api/middlewares"
 	"github.com/studentkickoff/gobp/internal/api/util"
@@ -23,7 +23,9 @@ type AuthRouter struct {
 
 func NewAPI(db database.DB, router fiber.Router) *AuthRouter {
 	goth.UseProviders(
-		microsoftonline.New(config.GetString("auth.msentra.client_id"), config.GetString("auth.msentra.client_secret"), config.GetString("auth.msentra.callbackURL")),
+		azureadv2.New(config.GetString("AUTH_MSENTRA_CLIENT_ID"), config.GetString("AUTH_MSENTRA_CLIENT_SECRET"), config.GetString("AUTH_MSENTRA_REDIRECT_URL"), azureadv2.ProviderOptions{
+			Tenant: azureadv2.TenantType(config.GetString("AUTH_MSENTRA_TENANT_ID")),
+		}),
 	)
 
 	api := &AuthRouter{

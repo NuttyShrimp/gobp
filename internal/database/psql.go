@@ -23,11 +23,11 @@ func NewPSQL() (DB, error) {
 		return nil, err
 	}
 
-	pgConfig.ConnConfig.Host = config.GetDefaultString("db.host", "localhost")
+	pgConfig.ConnConfig.Host = config.GetDefaultString("db.host", "db")
 	pgConfig.ConnConfig.Port = config.GetDefaultUint16("db.port", 5432)
 	pgConfig.ConnConfig.Database = config.GetDefaultString("db.database", "gobp")
 	pgConfig.ConnConfig.User = config.GetDefaultString("db.user", "postgres")
-	pgConfig.ConnConfig.Password = config.GetDefaultString("db.password", "postgres")
+	pgConfig.ConnConfig.Password = config.GetDefaultString("db.password", "password")
 
 	pool, err := pgxpool.NewWithConfig(context.Background(), pgConfig)
 	if err != nil {
