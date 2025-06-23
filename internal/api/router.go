@@ -13,16 +13,16 @@ import (
 
 func (s *Server) RegisterRoutes() {
 	env := config.GetDefaultString("app.env", "development")
-	s.App.Use(sentryfiber.New(sentryfiber.Options{
+	s.Use(sentryfiber.New(sentryfiber.Options{
 		Repanic:         true,
 		WaitForDelivery: false,
 	}))
 
-	s.App.Use(fiberzap.New(fiberzap.Config{
+	s.Use(fiberzap.New(fiberzap.Config{
 		Logger: zap.L(),
 	}))
 
-	api := s.App.Group("/api")
+	api := s.Group("/api")
 
 	auth.NewAPI(s.db, api)
 
@@ -31,12 +31,12 @@ func (s *Server) RegisterRoutes() {
 	user.NewAPI(s.db, protectedApi)
 
 	if env != "development" {
-		s.App.Static("/", "./public")
+		s.Static("/", "./public")
 		// Fallback for SPA to handle
-		s.App.Static("*", "./public/index.html")
+		s.Static("*", "./public/index.html")
 	}
 
-	s.App.All("/api*", func(c *fiber.Ctx) error {
+	s.All("/api*", func(c *fiber.Ctx) error {
 		return c.SendStatus(404)
 	})
 }

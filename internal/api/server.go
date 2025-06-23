@@ -11,18 +11,17 @@ import (
 	"github.com/studentkickoff/gobp/internal/database"
 	"github.com/studentkickoff/gobp/internal/redis"
 	"github.com/studentkickoff/gobp/pkg/config"
-	"github.com/studentkickoff/gobp/pkg/sqlc"
 	"go.uber.org/zap"
 )
 
 type Server struct {
 	*fiber.App
 	Addr string
-	db   *sqlc.Queries
+	db   database.DB
 }
 
 func NewServer() (*Server, error) {
-	db, pool, err := database.New()
+	db, err := database.NewPSQL()
 
 	if err != nil {
 		zap.L().Error("failed to get session", zap.Error(err), zap.String("module", "database"))
@@ -45,7 +44,7 @@ func NewServer() (*Server, error) {
 		})
 	} else {
 		sessionStore = postgres.New(postgres.Config{
-			DB: pool,
+			DB: db.Pool(),
 		})
 	}
 

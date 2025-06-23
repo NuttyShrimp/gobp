@@ -17,11 +17,11 @@ func main() {
 		panic(err)
 	}
 	// setup database
-	_, pool, err := database.New()
+	db, err := database.NewPSQL()
 	if err != nil {
 		panic(err)
 	}
-	db := stdlib.OpenDBFromPool(pool)
+	conn := stdlib.OpenDBFromPool(db.Pool())
 
 	goose.SetBaseFS(embedMigrations)
 
@@ -29,7 +29,7 @@ func main() {
 		panic(err)
 	}
 
-	if err := goose.Up(db, "db/migrations"); err != nil {
+	if err := goose.Up(conn, "db/migrations"); err != nil {
 		panic(err)
 	}
 
