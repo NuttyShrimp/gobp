@@ -39,6 +39,10 @@ FROM alpine:latest AS prod
 # Set our next working directory.
 WORKDIR /app
 
+RUN apk add --no-cache bash curl && curl -1sLf \
+'https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.alpine.sh' | bash \
+&& apk add infisical
+
 # Copy our executable and our built React application.
 COPY --from=backend-builder /app/server .
 COPY --from=backend-builder /app/migrate .
@@ -56,4 +60,4 @@ ENV APP_ENV=production
 
 # Declare entrypoints and activation commands.
 EXPOSE 8000
-ENTRYPOINT ["./server"]
+ENTRYPOINT ["infisical", "run", "--projectId", "<projectId>", "--", ./server"]

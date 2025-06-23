@@ -1,5 +1,5 @@
 [server]
-port = 8000
+port = 3001
 
 [app]
 name = "MyApp"
@@ -11,10 +11,10 @@ provider="browser"
 linker="gnu"
 
 [auth.sko]
-url = "http://localhost:3004"
+url = "http://host.docker.internal:3004"
 client_secret = ""
 
 [auth.msentra]
 client_id=""
 client_secret=""
-callbackURL="http://localhost:8000/api/auth/callback/microsoftonline"
+callbackURL="http://localhost:3000/api/auth/callback/azureadv2"
