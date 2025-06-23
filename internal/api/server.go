@@ -3,16 +3,11 @@ package api
 import (
 	"fmt"
 
-	sentryfiber "github.com/getsentry/sentry-go/fiber"
-	"github.com/gofiber/contrib/fiberzap"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/gofiber/storage/postgres/v3"
 	redisstore "github.com/gofiber/storage/redis/v3"
 	"github.com/shareed2k/goth_fiber"
-	"github.com/studentkickoff/gobp/internal/api/auth"
-	"github.com/studentkickoff/gobp/internal/api/middlewares"
-	"github.com/studentkickoff/gobp/internal/api/user"
 	"github.com/studentkickoff/gobp/internal/database"
 	"github.com/studentkickoff/gobp/internal/redis"
 	"github.com/studentkickoff/gobp/pkg/config"
@@ -62,32 +57,6 @@ func NewServer() (*Server, error) {
 	})
 
 	app := fiber.New()
-	app.Use(sentryfiber.New(sentryfiber.Options{
-		Repanic:         true,
-		WaitForDelivery: false,
-	}))
-
-	app.Use(fiberzap.New(fiberzap.Config{
-		Logger: zap.L(),
-	}))
-
-	api := app.Group("/api")
-
-	auth.NewAPI(db, api)
-
-	protectedApi := api.Use(middlewares.ProtectedRoute)
-
-	user.NewAPI(db, protectedApi)
-
-	if env != "development" {
-		app.Static("/", "./public")
-		// Fallback for SPA to handle
-		app.Static("*", "./public/index.html")
-	}
-
-	app.All("/api*", func(c *fiber.Ctx) error {
-		return c.SendStatus(404)
-	})
 
 	port := config.GetDefaultInt("server.port", 8000)
 	host := config.GetDefaultString("server.host", "127.0.0.1")
@@ -97,5 +66,8 @@ func NewServer() (*Server, error) {
 		Addr: fmt.Sprintf("%s:%d", host, port),
 		App:  app,
 	}
+
+	srv.RegisterRoutes()
+
 	return srv, nil
 }
