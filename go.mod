@@ -9,7 +9,7 @@ require (
 	github.com/getsentry/sentry-go v0.31.1
 	github.com/getsentry/sentry-go/fiber v0.31.1
 	github.com/gofiber/contrib/fiberzap v1.0.2
-	github.com/gofiber/fiber/v2 v2.52.6
+	github.com/gofiber/fiber/v2 v2.52.7
 	github.com/gofiber/storage/postgres/v3 v3.0.1
 	github.com/gofiber/storage/redis/v3 v3.1.3
 	github.com/jackc/pgx/v5 v5.7.4
