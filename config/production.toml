@@ -25,4 +25,5 @@ client_secret = ""
 [auth.msentra]
 client_id=""
 client_secret=""
-callbackURL=""
+redirect_url=""
+tenant_id=""
