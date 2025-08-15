@@ -20,5 +20,5 @@ client_secret = ""
 [auth.msentra]
 client_id=""
 client_secret=""
-redirect_url="http://localhost:8000/api/auth/callback/azureadv2"
+callback_url="http://localhost:8000/api/auth/callback/azureadv2"
 tenant_id=""

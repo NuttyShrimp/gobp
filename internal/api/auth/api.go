@@ -23,9 +23,12 @@ type AuthRouter struct {
 
 func NewAPI(db database.DB, router fiber.Router) *AuthRouter {
 	goth.UseProviders(
-		azureadv2.New(config.GetString("AUTH_MSENTRA_CLIENT_ID"), config.GetString("AUTH_MSENTRA_CLIENT_SECRET"), config.GetString("AUTH_MSENTRA_REDIRECT_URL"), azureadv2.ProviderOptions{
-			Tenant: azureadv2.TenantType(config.GetString("AUTH_MSENTRA_TENANT_ID")),
-		}),
+		azureadv2.New(
+			config.GetString("auth.msentra.client_id"),
+			config.GetString("auth.msentra.client_secret"),
+			config.GetString("auth.msentra.callback_url"),
+			azureadv2.ProviderOptions{Tenant: azureadv2.TenantType(config.GetString("auth.msentra.tenant_id"))},
+		),
 	)
 
 	api := &AuthRouter{
